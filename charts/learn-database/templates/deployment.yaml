@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "learn-database.fullname" . }}
+  labels:
+    app: {{ template "learn-database.name" . }}
+    chart: {{ template "learn-database.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "learn-database.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "learn-database.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+                - psql
+                - -U
+                - learn
+                - -d
+                - learn-db
+                - -c
+                - "SELECT 1"
+            initialDelaySeconds: 15
+            timeoutSeconds: 2
+          readinessProbe:
+            exec:
+              command:
+                - psql
+                - -U
+                - learn
+                - -d
+                - learn-db
+                - -c
+                - "SELECT 1"
+            initialDelaySeconds: 45
+            timeoutSeconds: 2
+          env:
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.env.pgpassword }}
+            - name: POSTGRES_USER
+              value: {{ .Values.env.user }}
+            - name: POSTGRES_DB
+              value: {{ .Values.env.database }}
+            - name: PGPASSWORD
+              value: {{ .Values.env.pgpassword }}
+            - name: APPINSIGHTS_INSTRUMENTATIONKEY
+              value: {{ .Values.applicationInsights.InstrumentationKey }}
+            {{- $root := . }}
+            {{- range $ref, $values := .Values.secrets }}
+            {{- range $key, $value := $values }}
+            - name: {{ $ref | upper }}_{{ $key | upper }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "learn-database.fullname" $root }}-{{ $ref }}
+                  key: {{ $key }}
+            {{- end }}
+            {{- end }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.imagePullSecrets }}
+        - name: {{ . }}
+      {{- end}}
+    {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
