@@ -22,6 +22,9 @@ env:
   user: learn
   database: learn-db
 
+ingress:
+  enabled: false
+
 secrets: {}
   # Optionally specify a set of secret objects whose values
   # will be injected as environment variables by default.
