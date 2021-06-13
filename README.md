@@ -2,7 +2,8 @@
 TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
 
 # Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
+Commande pour lancer le container postgres `docker exec -it learn-compose_postgres_1 /bin/bash`
+Commande pour se rendre sur la db: `psql learn_db node_user`
 1.	Installation process
 2.	Software dependencies
 3.	Latest releases
