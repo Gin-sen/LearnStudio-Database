@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+    name: "clusterlearnstudio-ef4d"
+    labels:
+        app: "clusterlearnstudio-ef4d"
+    annotations:
+        kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+    rules:
+        - host: learn-studio-clusterlearnstudio-ef4d.5ea67378e5364ca88eb9.northeurope.aksapp.io
+          http:
+            paths:
+            - path: /
+              backend:
+                serviceName: "clusterlearnstudio-ef4d"
+                servicePort: 27017
