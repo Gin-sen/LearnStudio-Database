@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: "clusterlearnstudio-ef4d"
+    labels:
+        app: "clusterlearnstudio-ef4d"
+spec:
+    type: ClusterIP
+    ports:
+    - port: 27017
+      targetPort: 27017
+      protocol: TCP
+      name: http
+    selector:
+        app: "clusterlearnstudio-ef4d"
