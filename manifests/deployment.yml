@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "clusterlearnstudio-ef4d"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "clusterlearnstudio-ef4d"
+  template:
+    metadata:
+      labels:
+        app: "clusterlearnstudio-ef4d"
+    spec:
+      containers:
+        - name: "clusterlearnstudio-ef4d"
+          image: "learnstudiocregistry.azurecr.io/clusterlearnstudio"
+          ports:
+          - containerPort: 27017
